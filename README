@@ -1,0 +1,7 @@
+README for clump
+
+This program can be used to create clump archive files or extract from
+them.
+
+Clump is an archive format used by Call of Duty in Black Ops 2 and 3 to
+'clump' together GSC source files and debug files.
