@@ -47,13 +47,3 @@ unsigned long filesize (FILE *f, const char *name) {
   xseek(f, pos, SEEK_SET, name);
   return (unsigned long)size;
 }
-
-int fileexists (const char *name) {
-  FILE *f = fopen(name, "rb");
-  if (f == NULL)
-    return 0;
-  else {
-    fclose(f);
-    return 1;
-  }
-}

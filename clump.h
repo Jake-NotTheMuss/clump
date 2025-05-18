@@ -19,6 +19,10 @@ typedef struct {
 
 #define CLUMP_MAX_FILES 2048
 
+/* align clump file contents to (1 << CLUMP_ALIGNMENT_POWER) */
+#define CLUMP_ALIGNMENT_POWER 12
+#define CLUMP_ALIGNMENT (1 << CLUMP_ALIGNMENT_POWER)
+
 typedef struct {
   const char *name;  /* clump file name */
   FILE *f;

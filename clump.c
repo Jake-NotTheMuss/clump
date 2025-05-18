@@ -13,6 +13,7 @@ static int cf_comp (const void *_a, const void *_b) {
   return a->name < b->name ? -1 : 1;
 }
 
+
 void clump_add (Clump *clump, const char *filename) {
   FILE *f;
   STRT_String *ts;
@@ -32,11 +33,11 @@ void clump_add (Clump *clump, const char *filename) {
   ts = strt_newstr(clump->table, filename);
   cf->name = ts->hash;
   /* calculate section offset of file */
-  ALIGNVAR(clump->pos, 0x1000);
-  if (clump->pos >> 12 > UINT_MAX)
+  ALIGNVAR(clump->pos, CLUMP_ALIGNMENT);
+  if (clump->pos >> CLUMP_ALIGNMENT_POWER > UINT_MAX)
     THROW("section offset too large to hold in unsigned integer (%lx)",
-          (unsigned long)(clump->pos >> 12));
-  cf->sec = (unsigned int)(clump->pos >> 12);
+          (unsigned long)(clump->pos >> CLUMP_ALIGNMENT_POWER));
+  cf->sec = (unsigned int)(clump->pos >> CLUMP_ALIGNMENT_POWER);
   clump->pos += cf->size;
   if ((size_t)cf->size > clump->maxsize)
     clump->maxsize = (size_t)cf->size;
@@ -77,7 +78,7 @@ void clump_write (Clump *clump) {
       const STRT_String *ts = strt_findh(clump->table, cf->name);
       curname = strt_getstr(ts);
       pos = xtell(clump->f, clump->name);
-      newpos = (long)(cf->sec) << 12;
+      newpos = (long)(cf->sec) << CLUMP_ALIGNMENT_POWER;
       assert(newpos >= pos);
       pad(clump, (size_t)(newpos - pos));
       cur = xopen(curname, "rb");
@@ -91,7 +92,7 @@ void clump_write (Clump *clump) {
   /* write hashmap */
   {
     long pos = xtell(clump->f, clump->name);
-    ALIGNVAR(pos, 0x1000);
+    ALIGNVAR(pos, CLUMP_ALIGNMENT);
     xseek(clump->f, pos, SEEK_SET, clump->name);
     char *buf;
     FOREACH_CLUMP_EX(scf, cf, {

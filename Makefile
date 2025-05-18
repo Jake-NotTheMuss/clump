@@ -11,10 +11,10 @@ all: clump
 clump: $(src) $(hdr)
 	$(CC) $(CFLAGS) -o $@ $(src)
 
-distclean: clean
-	rm -f gdb_names.txt
+test:
+	sh test.sh
 
 clean:
 	rm -f clump.exe
 
-.PHONY: all clean distclean
+.PHONY: all clean test

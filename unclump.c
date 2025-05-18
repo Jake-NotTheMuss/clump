@@ -17,8 +17,9 @@ long get_hashmap_offs (const Clump *clump) {
   const ClumpFile *max_sec_cf = clump->files;
   long offs;
   FOREACH_CLUMP(clump, cf, if (cf->sec > max_sec_cf->sec) max_sec_cf = cf);
-  offs = (long)(((long)max_sec_cf->sec << 12) + max_sec_cf->size);
-  return ALIGN(offs, 0x1000);
+  offs = (long)(((long)max_sec_cf->sec << CLUMP_ALIGNMENT_POWER) +
+                max_sec_cf->size);
+  return ALIGN(offs, CLUMP_ALIGNMENT);
 }
 
 void clump_loadhash (const Clump *clump) {
@@ -54,8 +55,8 @@ void unclump(const Clump *clump, ClumpFileWriter cb) {
     const char *name = getname(clump, cf);
     char *buf;
     long offs;
-    assert(cf->sec << 12 <= LONG_MAX);
-    offs = cf->sec << 12;
+    assert(cf->sec << CLUMP_ALIGNMENT_POWER <= LONG_MAX);
+    offs = cf->sec << CLUMP_ALIGNMENT_POWER;
     /* use hash as the filename if not found in the hashtable */
     if (name == NULL) {
       sprintf(namebuf, "%x", cf->name);

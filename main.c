@@ -135,8 +135,10 @@ static int dofile (const char *filename) {
       outclump.name = outname;
       outclump.table = &hashtable;
       outclump.pos = sizeof(outclump.files);
-      if (append)
-        append = fileexists(outname);
+      if (append) {
+        TRY(outclump.f = xopen(outname, "rb"));
+        append = outclump.f != NULL;
+      }
       if (append) {
         outclump.f = xopen(outname, "rb");
         read_header(&outclump);
